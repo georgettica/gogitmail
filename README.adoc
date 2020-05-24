@@ -1,0 +1,17 @@
+this repo holds a tool to configure your email depending of your git provider
+
+
+the resoning is that each provider (github/gitlab) can have a hidden email that doesn't expose your email outside.
+
+this means that each repo has to have a local setting of `user.email`
+
+this tool is written in  golang for learning purposes.
+
+# resources
+
+gitlab notifications (has the private email there) https://docs.gitlab.com/ee/user/profile/notifications.html
+and https://docs.gitlab.com/ee/user/admin_area/settings/email.html#custom-hostname-for-private-commit-emails
+
+and github https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/setting-your-commit-email-address
+
+
