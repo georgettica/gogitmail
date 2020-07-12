@@ -21,26 +21,26 @@ to do that copy the file
 
 [source,shell]
 ----
-include::env.source.sample[]
+include::env.source.sample
 ----
 
 == Make your own env
 you should copy it via the command `cp env.source.sample env.source` and set your environment with the correct values
 
 === Get token from gitlab
-refer to https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html and take the `read_user`
+refer to https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html and choose the `read_user` permission
 
 === Get token from github
-refer to https://docs.cachethq.io/docs/github-oauth-token and take the `read_user`
+refer to https://docs.cachethq.io/docs/github-oauth-token and choose the `read_user` permission
 
 == Use it in local development
 then when you should use it via the command `source env.source`
 
-# resources on private emails
+= resources on private emails
 
-## gitlab
+== gitlab
 the private email is written in this link https://docs.gitlab.com/ee/user/profile/notifications.html
 and also https://docs.gitlab.com/ee/user/admin_area/settings/email.html#custom-hostname-for-private-commit-emails
 
-## github
+== github
 https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/setting-your-commit-email-address
