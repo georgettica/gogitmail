@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net/url"
 
 	"os"
 	"path"
@@ -33,7 +34,6 @@ func main() {
 }
 
 var (
-	// LocalRequestMaker jj
 	LocalRequestMaker interfaces.RequestMaker
 )
 
@@ -82,8 +82,12 @@ func LabEmail() string {
 	}
 	gitlabPrivateURL := e.Getenv("GITLAB_HOSTNAME")
 
-	resp, err := LocalRequestMaker.ToGitlab("https://" + gitlabPrivateURL + "/api/v4/user?access_token=" + token)
+	resp, err := LocalRequestMaker.ToGitlab(fmt.Sprintf("https://%v/api/v4/user?access_token=%v", gitlabPrivateURL, token))
 	if err != nil {
+		if _, ok := err.(*url.Error); ok {
+			fmt.Printf("Cannot access %v, maybe it's behind a VPN\n", gitlabPrivateURL)
+			panic(0)
+		}
 		panic(err.Error())
 	}
 	defer resp.Body.Close()
