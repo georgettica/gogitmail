@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/url"
 
 	"os"
@@ -20,17 +21,50 @@ import (
 
 var e venv.Env
 
+type RemoteType int
+
+const (
+	GitLabRemote RemoteType = iota
+	GitHubRemote
+	NoRemote
+)
+
 func main() {
 	e = venv.OS()
-	PrintGitRemotes()
+	repository, err := GetRepository()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	localEmail := PrintGitEmail(repository)
+
+	if localEmail != "" {
+		panic("email already set, no action to do")
+	}
 
 	gitlabEmail := LabEmail()
 	githubEmail := HubEmail()
+	var email string
 
-	fmt.Printf("lab ::: %v\nhub ::: %v\n", gitlabEmail, githubEmail)
+	currentRepoRemoteType := GetRepoType(repository)
+	switch currentRepoRemoteType {
+	case GitLabRemote:
+		email = gitlabEmail
+	case GitHubRemote:
+		email = githubEmail
+	case NoRemote:
+		panic("No Remote found, exiting")
+	}
 
-	//fmt.Printf("email ::: %v\n", conf.User.Email)
-
+	cfg, err := repository.Config()
+	if err != nil {
+		panic(err.Error())
+	}
+	cfg.User.Email = email
+	err = repository.SetConfig(cfg)
+	if err != nil {
+		panic(err.Error())
+	}
 }
 
 var (
@@ -49,16 +83,14 @@ func SetEnv(inputEnv venv.Env) {
 // HubEmail gets the users email from github
 func HubEmail() string {
 	const githubURL string = "github.com"
-	token, exists := e.LookupEnv("GITHUB_TOKEN")
-	if !exists {
-		panic(errors.New("GITHUB_TOKEN env doesnt exist"))
-	}
+	token := e.Getenv("GITHUB_TOKEN")
 	bearer := fmt.Sprintf("token %v", token)
-	resp, err := LocalRequestMaker.ToGithub("https://api."+githubURL+"/user", bearer)
 
+	resp, err := LocalRequestMaker.ToGithub("https://api."+githubURL+"/user", bearer)
 	if err != nil {
 		panic(err.Error())
 	}
+
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		panic(err.Error())
@@ -76,14 +108,19 @@ func HubEmail() string {
 
 // LabEmail gets the users email from gitlab
 func LabEmail() string {
-	token, exists := e.LookupEnv("GITLAB_TOKEN")
-	if !exists {
-		panic(errors.New("GITLAB_TOKEN env doesnt exist"))
-	}
+	token := e.Getenv("GITLAB_TOKEN")
 	gitlabPrivateURL := e.Getenv("GITLAB_HOSTNAME")
 
 	resp, err := LocalRequestMaker.ToGitlab(fmt.Sprintf("https://%v/api/v4/user?access_token=%v", gitlabPrivateURL, token))
 	if err != nil {
+		newErr := errors.Unwrap(err)
+		fmt.Println(newErr)
+		newErr1 := errors.Unwrap(newErr)
+		fmt.Println(newErr1)
+		//var dnsT net.DNSError
+		if _, ok := newErr1.(*net.DNSError); ok {
+			fmt.Println("hi")
+		}
 		if _, ok := err.(*url.Error); ok {
 			fmt.Printf("Cannot access %v, maybe it's behind a VPN\n", gitlabPrivateURL)
 			panic(0)
@@ -107,36 +144,34 @@ func LabEmail() string {
 	return fmt.Sprintf("%v@users.noreply.%v", i.GetID(), gitlabPrivateURL)
 }
 
-func GetRepoType(repository *git.Repository) string {
+func GetRepoType(repository *git.Repository) RemoteType {
 	remotes, _ := repository.Remotes()
 	for _, remote := range remotes {
 		for _, remoteURL := range remote.Config().URLs {
 			if strings.Contains(remoteURL, "gitlab") {
-				return "gitlab"
+				return GitLabRemote
 			} else if strings.Contains(remoteURL, "github") {
-				return "github"
+				return GitHubRemote
 			}
 		}
 	}
-	return ""
+	return NoRemote
 }
 
-func PrintGitRemotes() string {
+func GetRepository() (*git.Repository, error) {
 	wd, err := os.Getwd()
 	if err != nil {
 		panic(err.Error())
 	}
 
-	repository, err := git.PlainOpen(path.Join(wd, ".git"))
-	if err != nil {
-		panic(err.Error())
-	}
+	return git.PlainOpen(path.Join(wd, ".git"))
+}
+func PrintGitEmail(repository *git.Repository) string {
 
 	cfg, err := repository.ConfigScoped(config.SystemScope)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	fmt.Printf("email merged ::: %v\n", cfg.User.Email)
 	return cfg.User.Email
 }
