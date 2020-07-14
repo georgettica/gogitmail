@@ -137,6 +137,10 @@ func LabEmail() string {
 		panic(err.Error())
 	}
 	i := interfaces.GitRemoteUser(gitlab)
+	id := i.GetID()
+	if id == "0" {
+		panic("ID is 0, probbably because of revoked token")
+	}
 
 	return fmt.Sprintf("%v@users.noreply.%v", i.GetID(), gitlabPrivateURL)
 }
