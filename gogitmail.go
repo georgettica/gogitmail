@@ -99,8 +99,12 @@ func HubEmail() string {
 		panic(err.Error())
 	}
 	i := interfaces.GitRemoteUser(github)
+	id := i.GetID()
+	if id == "0" {
+		panic("ID is 0, probbably because of revoked token")
+	}
 
-	return fmt.Sprintf("%v@users.noreply.github.com", i.GetID())
+	return fmt.Sprintf("%v@users.noreply.github.com", id)
 }
 
 // LabEmail gets the users email from gitlab
@@ -142,7 +146,7 @@ func LabEmail() string {
 		panic("ID is 0, probbably because of revoked token")
 	}
 
-	return fmt.Sprintf("%v@users.noreply.%v", i.GetID(), gitlabPrivateURL)
+	return fmt.Sprintf("%v@users.noreply.%v", id, gitlabPrivateURL)
 }
 
 func GetRepository() (*git.Repository, error) {
