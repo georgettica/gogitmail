@@ -3,9 +3,8 @@ package main_test
 import (
 	"encoding/json"
 
-	. "github.com/georgettica/local_git_email/pkg/gomarshal"
-	//. "github.com/georgettica/local_git_email/pkg/gomarshal/interfaces/mock"
-	. "github.com/georgettica/local_git_email/pkg/gomarshal/structs"
+	. "github.com/georgettica/gogitmail"
+	. "github.com/georgettica/gogitmail/structs"
 
 	"github.com/adammck/venv"
 	"github.com/golang/mock/gomock"
@@ -30,7 +29,7 @@ func init() {
 
 }
 
-var _ = Describe("Gomarshal", func() {
+var _ = Describe("GoGitMail", func() {
 
 	Describe("LabEmail", func() {
 		Describe("with external http mocking package", func() {

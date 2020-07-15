@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestGomarshal(t *testing.T) {
+func TestGogitmail(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Gomarshal Suite")
+	RunSpecs(t, "Gogitmail Suite")
 }

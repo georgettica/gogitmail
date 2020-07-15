@@ -5,26 +5,55 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"os"
+	"path"
+
 	"github.com/adammck/venv"
-	"github.com/georgettica/local_git_email/pkg/gomarshal/interfaces"
-	"github.com/georgettica/local_git_email/pkg/gomarshal/structs"
-	//"github.com/go-git/go-git/config"
+	"github.com/georgettica/gogitmail/interfaces"
+	"github.com/georgettica/gogitmail/structs"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
 )
 
 var e venv.Env
 
 func main() {
 	e = venv.OS()
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	r, err := git.PlainOpen(path.Join(wd, ".git"))
+	if err != nil {
+		panic(err.Error())
+	}
+	rem, _ := r.Remotes()
+	fmt.Printf("%v\n", rem)
+
+	cfgGlobal, err := config.LoadConfig(config.GlobalScope)
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Printf("email GlobalScope::: %v\n", cfgGlobal.User.Email)
+
+	cfgSystem, err := config.LoadConfig(config.SystemScope)
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Printf("email SystemScope ::: %v\n", cfgSystem.User.Email)
+
+	// cfgLocal, err := config.LoadConfig(config.LocalScope)
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+	// fmt.Printf("email LocalScope ::: %v\n", cfgLocal.User.Email)
 
 	gitlabEmail := LabEmail()
 	githubEmail := HubEmail()
 
 	fmt.Printf("lab ::: %v\nhub ::: %v\n", gitlabEmail, githubEmail)
 
-	//conf, err := config.LoadConfig(config.SystemScope)
-	//if err != nil {
-	//	panic(err.Error())
-	//}
 	//fmt.Printf("email ::: %v\n", conf.User.Email)
 
 }
