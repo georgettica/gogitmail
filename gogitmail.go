@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
-	"net/url"
 
 	"os"
 	"path"
@@ -39,16 +38,14 @@ func main() {
 		panic("email already set, no action to do")
 	}
 
-	gitlabEmail := LabEmail()
-	githubEmail := HubEmail()
 	var email string
 
 	currentRepoRemoteType := remotetype.GetRepoType(repository)
 	switch currentRepoRemoteType {
 	case remotetype.GitLabRemote:
-		email = gitlabEmail
+		email = LabEmail()
 	case remotetype.GitHubRemote:
-		email = githubEmail
+		email = HubEmail()
 	case remotetype.NoRemote:
 		panic("No Remote found, exiting")
 	}
@@ -114,15 +111,8 @@ func LabEmail() string {
 
 	resp, err := LocalRequestMaker.ToGitlab(fmt.Sprintf("https://%v/api/v4/user?access_token=%v", gitlabPrivateURL, token))
 	if err != nil {
-		newErr := errors.Unwrap(err)
-		fmt.Println(newErr)
-		newErr1 := errors.Unwrap(newErr)
-		fmt.Println(newErr1)
-		//var dnsT net.DNSError
-		if _, ok := newErr1.(*net.DNSError); ok {
-			fmt.Println("hi")
-		}
-		if _, ok := err.(*url.Error); ok {
+		var dnsErr *net.DNSError
+		if errors.As(err, &dnsErr) {
 			fmt.Printf("Cannot access %v, maybe it's behind a VPN\n", gitlabPrivateURL)
 			panic(0)
 		}
