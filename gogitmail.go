@@ -19,35 +19,7 @@ var e venv.Env
 
 func main() {
 	e = venv.OS()
-	wd, err := os.Getwd()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	r, err := git.PlainOpen(path.Join(wd, ".git"))
-	if err != nil {
-		panic(err.Error())
-	}
-	rem, _ := r.Remotes()
-	fmt.Printf("%v\n", rem)
-
-	cfgGlobal, err := config.LoadConfig(config.GlobalScope)
-	if err != nil {
-		panic(err.Error())
-	}
-	fmt.Printf("email GlobalScope::: %v\n", cfgGlobal.User.Email)
-
-	cfgSystem, err := config.LoadConfig(config.SystemScope)
-	if err != nil {
-		panic(err.Error())
-	}
-	fmt.Printf("email SystemScope ::: %v\n", cfgSystem.User.Email)
-
-	// cfgLocal, err := config.LoadConfig(config.LocalScope)
-	// if err != nil {
-	// 	panic(err.Error())
-	// }
-	// fmt.Printf("email LocalScope ::: %v\n", cfgLocal.User.Email)
+	LocalGitEmail()
 
 	gitlabEmail := LabEmail()
 	githubEmail := HubEmail()
@@ -122,4 +94,38 @@ func LabEmail() string {
 	i := interfaces.GitRemoteUser(gitlab)
 
 	return fmt.Sprintf("%v@users.noreply.%v", i.GetID(), gitlabPrivateURL)
+}
+
+func LocalGitEmail() {
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	r, err := git.PlainOpen(path.Join(wd, ".git"))
+	if err != nil {
+		panic(err.Error())
+	}
+
+	rem, _ := r.Remotes()
+	fmt.Printf("%v\n", rem)
+
+	cfgGlobal, err := config.LoadConfig(config.GlobalScope)
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Printf("email GlobalScope::: %v\n", cfgGlobal.User.Email)
+
+	cfgSystem, err := config.LoadConfig(config.SystemScope)
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Printf("email SystemScope ::: %v\n", cfgSystem.User.Email)
+
+	cfgLocal, err := r.Config()
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Printf("email LocalScope ::: %v\n", cfgLocal.User.Email)
+
 }
