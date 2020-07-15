@@ -1,17 +1,46 @@
-this repo holds a tool to configure your email depending of your git provider
+= Why
+this tool is written in  golang for learning purposes.
 
+this tool was supposed to answer a couple of criteria:
+
+*  Work with an `API` and ingest some data from it
+* `Marshal`/`UnMarshal` Json objects
+*  use `gomock` as mocking package (see https://github.com/golang/mock[here])
+*  use `ginkgo` as the testing framework (see https://github.com/onsi/ginkgo[here])
+
+= Purpose
+this repo holds a tool to configure your email depending of your git provider
 
 the resoning is that each provider (github/gitlab) can have a hidden email that doesn't expose your email outside.
 
 this means that each repo has to have a local setting of `user.email`
 
-this tool is written in  golang for learning purposes.
+= Setup
+To setup your system is to get tokens for github and gitlab, also we need to set the gitlab hostname
+to do that copy the file 
 
-# resources
+[source,shell]
+----
+include::env.source.sample[]
+----
 
-gitlab notifications (has the private email there) https://docs.gitlab.com/ee/user/profile/notifications.html
-and https://docs.gitlab.com/ee/user/admin_area/settings/email.html#custom-hostname-for-private-commit-emails
+== Make your own env
+you should copy it via the command `cp env.source.sample env.source` and set your environment with the correct values
 
-and github https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/setting-your-commit-email-address
+=== Get token from gitlab
+refer to https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html and take the `read_user`
 
+=== Get token from github
+refer to https://docs.cachethq.io/docs/github-oauth-token and take the `read_user`
 
+== Use it in local development
+then when you should use it via the command `source env.source`
+
+# resources on private emails
+
+## gitlab
+the private email is written in this link https://docs.gitlab.com/ee/user/profile/notifications.html
+and also https://docs.gitlab.com/ee/user/admin_area/settings/email.html#custom-hostname-for-private-commit-emails
+
+## github
+https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/setting-your-commit-email-address
