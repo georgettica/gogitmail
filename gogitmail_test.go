@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 
 	. "github.com/georgettica/gogitmail"
-	"github.com/georgettica/gogitmail/structs"
-	. "github.com/georgettica/gogitmail/structs"
+	"github.com/georgettica/gogitmail/pkg/structs"
+	. "github.com/georgettica/gogitmail/pkg/structs"
 
 	"github.com/adammck/venv"
 	"github.com/golang/mock/gomock"
