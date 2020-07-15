@@ -2,11 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 
 	"os"
 	"path"
+	"strings"
 
 	"github.com/adammck/venv"
 	"github.com/georgettica/gogitmail/interfaces"
@@ -19,7 +21,7 @@ var e venv.Env
 
 func main() {
 	e = venv.OS()
-	LocalGitEmail()
+	PrintGitRemotes()
 
 	gitlabEmail := LabEmail()
 	githubEmail := HubEmail()
@@ -47,7 +49,10 @@ func SetEnv(inputEnv venv.Env) {
 // HubEmail gets the users email from github
 func HubEmail() string {
 	const githubURL string = "github.com"
-	token := e.Getenv("GITHUB_TOKEN")
+	token, exists := e.LookupEnv("GITHUB_TOKEN")
+	if !exists {
+		panic(errors.New("GITHUB_TOKEN env doesnt exist"))
+	}
 	bearer := fmt.Sprintf("token %v", token)
 	resp, err := LocalRequestMaker.ToGithub("https://api."+githubURL+"/user", bearer)
 
@@ -71,8 +76,10 @@ func HubEmail() string {
 
 // LabEmail gets the users email from gitlab
 func LabEmail() string {
-	token := e.Getenv("GITLAB_TOKEN")
-
+	token, exists := e.LookupEnv("GITLAB_TOKEN")
+	if !exists {
+		panic(errors.New("GITLAB_TOKEN env doesnt exist"))
+	}
 	gitlabPrivateURL := e.Getenv("GITLAB_HOSTNAME")
 
 	resp, err := LocalRequestMaker.ToGitlab("https://" + gitlabPrivateURL + "/api/v4/user?access_token=" + token)
@@ -96,36 +103,36 @@ func LabEmail() string {
 	return fmt.Sprintf("%v@users.noreply.%v", i.GetID(), gitlabPrivateURL)
 }
 
-func LocalGitEmail() {
+func GetRepoType(repository *git.Repository) string {
+	remotes, _ := repository.Remotes()
+	for _, remote := range remotes {
+		for _, remoteURL := range remote.Config().URLs {
+			if strings.Contains(remoteURL, "gitlab") {
+				return "gitlab"
+			} else if strings.Contains(remoteURL, "github") {
+				return "github"
+			}
+		}
+	}
+	return ""
+}
+
+func PrintGitRemotes() string {
 	wd, err := os.Getwd()
 	if err != nil {
 		panic(err.Error())
 	}
 
-	r, err := git.PlainOpen(path.Join(wd, ".git"))
+	repository, err := git.PlainOpen(path.Join(wd, ".git"))
 	if err != nil {
 		panic(err.Error())
 	}
 
-	rem, _ := r.Remotes()
-	fmt.Printf("%v\n", rem)
-
-	cfgGlobal, err := config.LoadConfig(config.GlobalScope)
+	cfg, err := repository.ConfigScoped(config.SystemScope)
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("email GlobalScope::: %v\n", cfgGlobal.User.Email)
 
-	cfgSystem, err := config.LoadConfig(config.SystemScope)
-	if err != nil {
-		panic(err.Error())
-	}
-	fmt.Printf("email SystemScope ::: %v\n", cfgSystem.User.Email)
-
-	cfgLocal, err := r.Config()
-	if err != nil {
-		panic(err.Error())
-	}
-	fmt.Printf("email LocalScope ::: %v\n", cfgLocal.User.Email)
-
+	fmt.Printf("email merged ::: %v\n", cfg.User.Email)
+	return cfg.User.Email
 }
