@@ -83,7 +83,7 @@ func HubEmail() string {
 	token := e.Getenv("GITHUB_TOKEN")
 	bearer := fmt.Sprintf("token %v", token)
 
-	resp, err := LocalRequestMaker.ToGithub("https://api."+githubURL+"/user", bearer)
+	resp, err := LocalRequestMaker.ToGithub(fmt.Sprintf("https://api.%v/user", githubURL), bearer)
 	if err != nil {
 		panic(err.Error())
 	}
