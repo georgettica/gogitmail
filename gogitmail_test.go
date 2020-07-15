@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	. "github.com/georgettica/gogitmail"
+	"github.com/georgettica/gogitmail/structs"
 	. "github.com/georgettica/gogitmail/structs"
 
 	"github.com/adammck/venv"
@@ -21,13 +22,14 @@ func mockResponse(statusCode int, headers map[string]string, body []byte) {
 }
 
 func init() {
-	env := venv.Mock()
-	env.Setenv("GITHUB_TOKEN", "aaaa")
-	env.Setenv("GITLAB_TOKEN", "bbbb")
-	env.Setenv("GITLAB_HOSTNAME", "test.example.com")
-	SetEnv(env)
-
+	e := venv.Mock()
+	e.Setenv("GITHUB_TOKEN", "aaaa")
+	e.Setenv("GITLAB_TOKEN", "bbbb")
+	e.Setenv("GITLAB_HOSTNAME", "test.example.com")
+	conf = NewGogitmailConfig(e, &structs.MakeRequest{})
 }
+
+var conf *GogitmailConfig
 
 var _ = Describe("GoGitMail", func() {
 
@@ -42,7 +44,7 @@ var _ = Describe("GoGitMail", func() {
 				mockResponse(http.StatusOK, map[string]string{"Content-Type": "text/plain"}, bytes)
 			})
 			It("should return user id for email", func() {
-				Expect(LabEmail()).To(Equal("1234+username@users.noreply.test.example.com"))
+				Expect(conf.LabEmail()).To(Equal("1234+username@users.noreply.test.example.com"))
 			})
 		})
 		Context("With valid response", func() {
@@ -55,7 +57,7 @@ var _ = Describe("GoGitMail", func() {
 				mockResponse(http.StatusOK, map[string]string{"Content-Type": "text/plain"}, bytes)
 			})
 			It("should return user id for email", func() {
-				Expect(LabEmail()).To(Equal("1234+username@users.noreply.test.example.com"))
+				Expect(conf.LabEmail()).To(Equal("1234+username@users.noreply.test.example.com"))
 			})
 		})
 	})
@@ -71,7 +73,7 @@ var _ = Describe("GoGitMail", func() {
 				mockResponse(http.StatusOK, map[string]string{"Content-Type": "text/plain"}, bytes)
 			})
 			It("should return user id for email", func() {
-				Expect(HubEmail()).To(Equal("1234+username@users.noreply.github.com"))
+				Expect(conf.HubEmail()).To(Equal("1234+username@users.noreply.github.com"))
 			})
 		})
 		Context("With gomock", func() {
@@ -88,7 +90,7 @@ var _ = Describe("GoGitMail", func() {
 				mockResponse(http.StatusOK, map[string]string{"Content-Type": "text/plain"}, bytes)
 			})
 			It("should return user id for email", func() {
-				Expect(HubEmail()).To(Equal("1234+username@users.noreply.github.com"))
+				Expect(conf.HubEmail()).To(Equal("1234+username@users.noreply.github.com"))
 			})
 		})
 	})

@@ -4,6 +4,11 @@ import (
 	"net/http"
 )
 
+// type RequestMaker interface  {
+// 	MakeHubRequest(url, token string) (*http.Response, error)
+// 	MakeLabRequest(url string) (*http.Response, error)
+// }
+
 type MakeRequest struct{}
 
 func (t *MakeRequest) ToGithub(url, token string) (*http.Response, error) {
