@@ -31,7 +31,7 @@ you should copy it via the command `cp env.source.sample env.source` and set you
 refer to https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html and choose the `read_user` permission
 
 === Get token from github
-refer to https://docs.cachethq.io/docs/github-oauth-token and choose the `read_user` permission
+refer to https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token and choose the `read_user` permission
 
 == Use it in local development
 then when you should use it via the command `source env.source`
