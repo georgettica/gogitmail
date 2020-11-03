@@ -119,7 +119,8 @@ func (conf GogitmailConfig) HubEmail() string {
 	}
 	i := interfaces.GitRemoteUser(github)
 	id := i.GetID()
-	if id == "0" {
+	fmt.Printf("id is %s", id)
+	if id == "0+" {
 		panic("ID is 0, probbably because of revoked token")
 	}
 
@@ -152,7 +153,8 @@ func (conf GogitmailConfig) LabEmail() string {
 	}
 
 	id := interfaces.GitRemoteUser(gitlab).GetID()
-	if id == "0" {
+	fmt.Printf("id is %s", id)
+	if id == "0+" {
 		panic("ID is 0, probbably because of revoked token")
 	}
 
