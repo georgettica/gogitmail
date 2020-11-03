@@ -19,10 +19,7 @@ this means that each repo has to have a local setting of `user.email`
 To setup your system is to get tokens for github and gitlab, also we need to set the gitlab hostname
 to do that copy the file 
 
-[source,shell]
-----
-include::env.source.sample
-----
+include::env.source.sample[]
 
 == Make your own env
 you should copy it via the command `cp env.source.sample env.source` and set your environment with the correct values
