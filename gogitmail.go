@@ -99,7 +99,7 @@ func runGogitmail(c *cli.Context) {
 
 func (conf GogitmailConfig) HubEmail() string {
 	const githubURL string = "github.com"
-	token := conf.env.Getenv("GITHUB_TOKEN")
+	token := conf.env.Getenv("GOGITMAIL_GITHUB_TOKEN")
 	bearer := fmt.Sprintf("token %v", token)
 
 	resp, err := conf.requestMaker.ToGithub(fmt.Sprintf("https://api.%v/user", githubURL), bearer)
@@ -127,8 +127,8 @@ func (conf GogitmailConfig) HubEmail() string {
 }
 
 func (conf GogitmailConfig) LabEmail() string {
-	token := conf.env.Getenv("GITLAB_TOKEN")
-	gitlabPrivateURL := conf.env.Getenv("GITLAB_HOSTNAME")
+	token := conf.env.Getenv("GOGITMAIL_GITLAB_TOKEN")
+	gitlabPrivateURL := conf.env.Getenv("GOGITMAIL_GITLAB_HOSTNAME")
 
 	resp, err := conf.requestMaker.ToGitlab(fmt.Sprintf("https://%v/api/v4/user?access_token=%v", gitlabPrivateURL, token))
 	if err != nil {
