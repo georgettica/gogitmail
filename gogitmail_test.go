@@ -23,9 +23,9 @@ func mockResponse(statusCode int, headers map[string]string, body []byte) {
 
 func init() {
 	e := venv.Mock()
-	e.Setenv("GITHUB_TOKEN", "aaaa")
-	e.Setenv("GITLAB_TOKEN", "bbbb")
-	e.Setenv("GITLAB_HOSTNAME", "test.example.com")
+	e.Setenv("GOGITMAIL_GITHUB_TOKEN", "aaaa")
+	e.Setenv("GOGITMAIL_GITLAB_TOKEN", "bbbb")
+	e.Setenv("GOGITMAIL_GITLAB_HOSTNAME", "test.example.com")
 	conf = NewGogitmailConfig(e, &structs.MakeRequest{})
 }
 
