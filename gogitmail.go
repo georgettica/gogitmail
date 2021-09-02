@@ -18,11 +18,14 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// GogitmailConfig holds all of the data required to run operations
+// it holds these members also to allow for easier mocking
 type GogitmailConfig struct {
 	env          venv.Env
 	requestMaker interfaces.RequestMaker
 }
 
+// NewGogitmailConfig allows easy creation of the resource
 func NewGogitmailConfig(e venv.Env, rm interfaces.RequestMaker) *GogitmailConfig {
 	return &GogitmailConfig{
 		env:          e,
@@ -97,6 +100,7 @@ func runGogitmail(c *cli.Context) {
 	}
 }
 
+// HubEmail returns the user's github personal email
 func (conf GogitmailConfig) HubEmail() string {
 	const githubURL string = "github.com"
 	token := conf.env.Getenv("GOGITMAIL_GITHUB_TOKEN")
@@ -126,6 +130,7 @@ func (conf GogitmailConfig) HubEmail() string {
 	return fmt.Sprintf("%v@users.noreply.github.com", id)
 }
 
+// LabEmail returns the user's gitlab personal email
 func (conf GogitmailConfig) LabEmail() string {
 	token := conf.env.Getenv("GOGITMAIL_GITLAB_TOKEN")
 	gitlabPrivateURL := conf.env.Getenv("GOGITMAIL_GITLAB_HOSTNAME")
