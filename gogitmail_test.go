@@ -7,7 +7,7 @@ import (
 	"github.com/georgettica/gogitmail/pkg/structs"
 	. "github.com/georgettica/gogitmail/pkg/structs"
 
-	"github.com/adammck/venv"
+	"github.com/georgettica/venv"
 	"github.com/golang/mock/gomock"
 
 	"net/http"

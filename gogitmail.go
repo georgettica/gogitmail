@@ -9,11 +9,11 @@ import (
 	"net"
 	"os"
 
-	"github.com/adammck/venv"
 	"github.com/georgettica/gogitmail/pkg/interfaces"
 	"github.com/georgettica/gogitmail/pkg/structs"
 	"github.com/georgettica/gogitmail/pkg/structs/remotetype"
 	"github.com/georgettica/gogitmail/pkg/utils"
+	"github.com/georgettica/venv"
 
 	"github.com/urfave/cli/v2"
 )
