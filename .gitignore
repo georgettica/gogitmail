@@ -81,3 +81,6 @@ tags
 .vim
 
 # End of https://www.gitignore.io/api/go,vim,macos
+
+/bin/
+/dist/
