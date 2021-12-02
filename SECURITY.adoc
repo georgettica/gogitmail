@@ -1,0 +1,9 @@
+= Security Policy
+
+== Supported Versions
+
+I don't have versions, so if you are on upstream I will fix the issues once they come up
+
+== Reporting a Vulnerability
+
+Just create a PR/Issue, not expecting to have an issue... if you have a problem you can email my github email 11993626+georgettica@users.noreply.github.com
